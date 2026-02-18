@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>तनिष्क तिवारी के कितने बाप? — Baap Counter</title>
 
-  <!-- Japanese + Hindi Fonts -->
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@500;700&family=Yuji+Syuku&display=swap" rel="stylesheet">
 
   <style>
@@ -36,7 +36,6 @@
       position:relative;
     }
 
-    /* Rising sun effect */
     .sun{
       position:absolute;
       top:-120px;
@@ -68,12 +67,13 @@
     }
 
     #count{
-      font-size:60px;
+      font-size:56px;
       margin:20px 0;
       font-family:'Yuji Syuku', serif;
       color:var(--vermilion);
       text-shadow:0 0 20px rgba(225,6,0,0.6);
       transition:transform 0.15s ease;
+      word-break:break-word;
     }
 
     .circle-btn{
@@ -109,7 +109,7 @@
     }
 
     @media(max-width:400px){
-      #count{font-size:48px;}
+      #count{font-size:42px;}
       .circle-btn{width:130px;height:130px;}
     }
   </style>
@@ -158,6 +158,17 @@
 
     const countEl = document.getElementById("count");
 
+    // Indian Smart Formatter
+    function formatIndian(num){
+      if(num >= 10000000){
+        return (num / 10000000).toFixed(2) + " Cr";
+      }
+      if(num >= 100000){
+        return (num / 100000).toFixed(2) + " Lakh";
+      }
+      return num.toLocaleString("en-IN");
+    }
+
     async function ensureDoc(){
       const snap = await getDoc(counterRef);
       if(!snap.exists()){
@@ -168,7 +179,9 @@
 
     onSnapshot(counterRef,(docSnap)=>{
       const data = docSnap.data();
-      countEl.innerText = data?.num ?? 0;
+      const value = data?.num ?? 0;
+
+      countEl.innerText = formatIndian(value);
 
       countEl.style.transform="scale(1.1)";
       setTimeout(()=>{countEl.style.transform="scale(1)";},120);
@@ -180,5 +193,6 @@
       });
     };
   </script>
+
 </body>
 </html>
