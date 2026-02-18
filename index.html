@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>तनिष्क तिवारी के कितने बाप? — Baap Counter</title>
+
+  <!-- Japanese + Hindi Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@500;700&family=Yuji+Syuku&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --indigo:#0f1a2b;
+      --vermilion:#e10600;
+      --paper:#f5f1e6;
+      --ink:#111;
+    }
+
+    body{
+      margin:0;
+      height:100vh;
+      background:linear-gradient(180deg,var(--indigo) 0%, #070d18 100%);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      font-family:'Noto Serif Devanagari', serif;
+      color:var(--paper);
+      text-align:center;
+      overflow:hidden;
+    }
+
+    .container{
+      padding:20px;
+      max-width:420px;
+      width:100%;
+      position:relative;
+    }
+
+    /* Rising sun effect */
+    .sun{
+      position:absolute;
+      top:-120px;
+      left:50%;
+      transform:translateX(-50%);
+      width:300px;
+      height:300px;
+      background:radial-gradient(circle,var(--vermilion) 0%, rgba(225,6,0,0.3) 50%, transparent 70%);
+      border-radius:50%;
+      filter:blur(20px);
+      opacity:0.6;
+      z-index:0;
+    }
+
+    h1{
+      font-size:20px;
+      margin-bottom:10px;
+      z-index:2;
+      position:relative;
+      letter-spacing:1px;
+    }
+
+    .sub{
+      font-family:'Yuji Syuku', serif;
+      font-size:16px;
+      letter-spacing:3px;
+      opacity:0.8;
+      margin-bottom:25px;
+    }
+
+    #count{
+      font-size:60px;
+      margin:20px 0;
+      font-family:'Yuji Syuku', serif;
+      color:var(--vermilion);
+      text-shadow:0 0 20px rgba(225,6,0,0.6);
+      transition:transform 0.15s ease;
+    }
+
+    .circle-btn{
+      width:150px;
+      height:150px;
+      border-radius:50%;
+      border:6px solid var(--vermilion);
+      background:var(--paper);
+      color:var(--ink);
+      font-size:14px;
+      font-family:'Yuji Syuku', serif;
+      letter-spacing:2px;
+      cursor:pointer;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      margin:0 auto;
+      box-shadow:0 8px 25px rgba(0,0,0,0.5);
+      transition:0.2s ease;
+    }
+
+    .circle-btn:active{
+      transform:scale(0.92);
+      background:var(--vermilion);
+      color:var(--paper);
+    }
+
+    .footer{
+      margin-top:30px;
+      font-size:11px;
+      opacity:0.6;
+      letter-spacing:2px;
+    }
+
+    @media(max-width:400px){
+      #count{font-size:48px;}
+      .circle-btn{width:130px;height:130px;}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="sun"></div>
+
+    <h1>तनिष्क तिवारी के कितने बाप</h1>
+    <div class="sub">Baap Counter</div>
+
+    <div id="count">0</div>
+
+    <button class="circle-btn" onclick="incrementCounter()">
+      TAP
+    </button>
+
+    <div class="footer">The number reveals truth.</div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { 
+      getFirestore, 
+      doc, 
+      updateDoc, 
+      onSnapshot, 
+      increment,
+      getDoc,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB_rZQ0-PTcw2u--0AjybYOBtWnoh2XxDk",
+      authDomain: "counter-ea7c8.firebaseapp.com",
+      projectId: "counter-ea7c8",
+      storageBucket: "counter-ea7c8.firebasestorage.app",
+      messagingSenderId: "976604631332",
+      appId: "1:976604631332:web:fc0929d3231ac63a67a3b1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const counterRef = doc(db, "count", "c");
+
+    const countEl = document.getElementById("count");
+
+    async function ensureDoc(){
+      const snap = await getDoc(counterRef);
+      if(!snap.exists()){
+        await setDoc(counterRef,{num:0});
+      }
+    }
+    ensureDoc();
+
+    onSnapshot(counterRef,(docSnap)=>{
+      const data = docSnap.data();
+      countEl.innerText = data?.num ?? 0;
+
+      countEl.style.transform="scale(1.1)";
+      setTimeout(()=>{countEl.style.transform="scale(1)";},120);
+    });
+
+    window.incrementCounter = async function(){
+      await updateDoc(counterRef,{
+        num:increment(1)
+      });
+    };
+  </script>
+</body>
+</html>
